@@ -2,12 +2,12 @@ package app;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.restlet.Application;
 import org.restlet.Component;
+import org.restlet.Context;
 import org.restlet.data.Protocol;
 import org.restlet.routing.Router;
-import restlet.jackson.JacksonConverter;
 import restlet.RestletUtils;
+import restlet.jackson.JacksonConverter;
 import router.RootRouter;
 
 public class Peaceful {
@@ -18,12 +18,15 @@ public class Peaceful {
         component = new Component();
         component.getServers().add(Protocol.HTTP, 80);
         component.getClients().add(Protocol.FILE);
-        component.getClients().add(Protocol.CLAP);
 
         Injector injector = Guice.createInjector(new PeacefulModule());
-        Router rootRouter = new RootRouter(injector, component.getContext().createChildContext());
 
-        component.getDefaultHost().attach(rootRouter);
+        Context childContext = component.getContext().createChildContext();
+
+        component.setStatusService(new PeacefulStatusService());
+
+        Router router = new RootRouter(injector, childContext);
+        component.getDefaultHost().attach(router);
 
         RestletUtils.replaceConverter(org.restlet.ext.jackson.JacksonConverter.class, new JacksonConverter());
     }
