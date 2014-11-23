@@ -16,6 +16,9 @@ public class ConfigurationManager {
     PropertiesConfiguration configuration;
 
     public ConfigurationManager() {
+        String env = getEnvironment();
+        System.out.println("Reading config for environment: " + env);
+
         URL resource = this.getClass().getClassLoader().getResource("config.properties");
 
         try {
@@ -29,5 +32,11 @@ public class ConfigurationManager {
     public String getWebappRoot(){
         String baseDir = new File("").getAbsolutePath();
         return "file:///" + baseDir + configuration.getString("webapp.dir");
+    }
+
+    public String getEnvironment(){
+        String env = System.getProperty("env", null);
+        if (env == null) throw new RuntimeException("Environment has not been correctly specified: -Denv=dev");
+        return env;
     }
 }

@@ -16,7 +16,7 @@ public class Peaceful {
 
     public Peaceful() {
         component = new Component();
-        component.getServers().add(Protocol.HTTP, 80);
+        component.getServers().add(Protocol.HTTP, 8080);
         component.getClients().add(Protocol.FILE);
 
         Injector injector = Guice.createInjector(new PeacefulModule());
