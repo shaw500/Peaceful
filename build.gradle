@@ -1,0 +1,30 @@
+apply plugin: 'java'
+
+apply from: 'dependencies.gradle'
+
+version = '1.0'
+
+task(run, dependsOn: 'classes', type: JavaExec) {
+    main = 'app.Peaceful'
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty 'env', 'local'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'app.Peaceful',
+        'Implementation-Version': version,
+        'Main-Class': 'app.Peaceful'
+    }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'app.Peaceful',
+                'Implementation-Version': version,
+                'Main-Class': 'app.Peaceful'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
